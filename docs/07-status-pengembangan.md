@@ -12,7 +12,7 @@ Legenda: ✅ selesai · 🚧 sedang dikerjakan · ❌ belum ada
 | 2. Backend multi-portal | Repository `portals` & `links`, service + API CRUD portal & link, API publik + cache | ✅ |
 | 3. Dashboard admin | Daftar portal, buat/ubah/nonaktifkan/duplikat/hapus, editor profil & tema, kelola link (drag & drop, aktif, unggulan), pratinjau langsung | ✅ |
 | 4. Halaman publik | `/<kode>` SSR dengan tema, meta tag Open Graph (preview WhatsApp), cache CDN 60 detik, 404 | ✅ |
-| 5. Deploy | Repo GitHub ✅ (`FernandoJM1211/link-portal`, private) · Vercel + environment variable (menunggu pemilik proyek) | 🚧 |
+| 5. Deploy | Repo GitHub ✅ (`FernandoJM1211/link-portal`, private) · Vercel ✅ https://transjar-portal-link.vercel.app · region server masih iad1 (ganti ke sin1) | 🚧 |
 
 ## Fitur
 

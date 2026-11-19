@@ -79,7 +79,7 @@ Perintah ini langsung menyalin hasilnya ke clipboard (tidak tampil di layar):
 ## Deploy ke Vercel
 
 - Repo: `https://github.com/FernandoJM1211/link-portal` (private), branch `main`.
-- Domain: bawaan `<nama-proyek>.vercel.app`.
+- Domain: **https://transjar-portal-link.vercel.app** (alamat bawaan Vercel yang diganti di Settings → Domains; sebelumnya `link-portal-six.vercel.app`, sudah dilepas). Link portal: `transjar-portal-link.vercel.app/<kode>`.
 - Nuxt terdeteksi otomatis (Framework Preset **Nuxt.js**, build `nuxt build`); tidak perlu `vercel.json`.
 - Setiap `git push` ke `main` otomatis memicu deploy ulang.
 
