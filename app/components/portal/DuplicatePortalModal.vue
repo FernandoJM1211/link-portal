@@ -107,7 +107,7 @@ async function submit() {
       </BaseField>
 
       <p class="rounded-xl bg-amber-50 p-3 text-xs leading-relaxed text-amber-800">
-        💡 Portal salinan dibuat <span class="font-bold">nonaktif</span> agar bisa dicek dulu sebelum dibuka publik.
+        💡 Portal salinan dibuat <span class="font-bold">nonaktif</span> agar bisa dicek dulu. Nyalakan switch <span class="font-bold">"Tampilkan ke publik"</span> bila sudah siap.
       </p>
     </form>
 

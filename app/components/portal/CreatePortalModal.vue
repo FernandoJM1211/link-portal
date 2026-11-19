@@ -120,7 +120,7 @@ async function submit() {
 
       <p class="rounded-xl bg-amber-50 p-3 text-xs leading-relaxed text-amber-800">
         💡 Portal baru dibuat dalam keadaan <span class="font-bold">nonaktif</span> (belum bisa dibuka publik).
-        Aktifkan setelah profil dan tombol link siap.
+        Setelah profil dan tombol link siap, nyalakan switch <span class="font-bold">"Tampilkan ke publik"</span>.
       </p>
     </form>
 

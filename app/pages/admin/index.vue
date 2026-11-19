@@ -296,7 +296,7 @@ function tabClass(tab: Tab) {
                 :disabled="busyPortalIds.has(portal.portal_id)"
                 @update:model-value="setActive(portal, $event)"
               />
-              {{ portal.is_active ? 'Tampil publik' : 'Disembunyikan' }}
+              Tampilkan ke publik
             </label>
 
             <div class="flex items-center gap-2">

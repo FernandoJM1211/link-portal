@@ -225,7 +225,7 @@ const isPreviewOpen = ref(false)
                 :disabled="isUpdatingStatus"
                 @update:model-value="setActive"
               />
-              {{ portal.is_active ? 'Tampil publik' : 'Disembunyikan' }}
+              Tampilkan ke publik
             </label>
 
             <a
