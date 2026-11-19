@@ -154,3 +154,91 @@ export async function updateSheetRow(
 ): Promise<void> {
   await updateSheetRows(sheetName, [{ rowNumber, values }])
 }
+
+/** Cache ID numerik sheet (dibutuhkan untuk menghapus baris). ID sheet tidak berubah. */
+const sheetIdCache = new Map<string, number>()
+
+async function getSheetId(sheetName: string): Promise<number> {
+  const cached = sheetIdCache.get(sheetName)
+  if (cached !== undefined) return cached
+
+  const response = await getSheetsClient().spreadsheets.get({
+    spreadsheetId: getSpreadsheetId(),
+    fields: 'sheets.properties(sheetId,title)',
+  })
+
+  for (const sheet of response.data.sheets ?? []) {
+    const title = sheet.properties?.title
+    const sheetId = sheet.properties?.sheetId
+
+    if (title && typeof sheetId === 'number') {
+      sheetIdCache.set(title, sheetId)
+    }
+  }
+
+  const sheetId = sheetIdCache.get(sheetName)
+
+  if (sheetId === undefined) {
+    throw new Error(`Sheet "${sheetName}" tidak ditemukan.`)
+  }
+
+  return sheetId
+}
+
+/**
+ * Menghapus baris fisik (bukan sekadar mengosongkan) dalam satu request.
+ * `rowNumbers` mulai dari 1; baris header (1) tidak boleh dihapus.
+ * Dihapus dari bawah ke atas agar nomor baris lain tidak bergeser.
+ */
+export async function deleteSheetRows(sheetName: string, rowNumbers: number[]): Promise<void> {
+  const uniqueRows = [...new Set(rowNumbers)]
+    .filter((rowNumber) => rowNumber > 1)
+    .sort((a, b) => b - a)
+
+  if (uniqueRows.length === 0) return
+
+  const sheetId = await getSheetId(sheetName)
+
+  await getSheetsClient().spreadsheets.batchUpdate({
+    spreadsheetId: getSpreadsheetId(),
+    requestBody: {
+      requests: uniqueRows.map((rowNumber) => ({
+        deleteDimension: {
+          range: {
+            sheetId,
+            dimension: 'ROWS',
+            startIndex: rowNumber - 1,
+            endIndex: rowNumber,
+          },
+        },
+      })),
+    },
+  })
+}
+
+/**
+ * Membuat `count` ID berurutan `PREFIX-000001` berdasarkan nomor terbesar
+ * di kolom A dari `rows` (hasil `getSheetValues`, termasuk header).
+ */
+export function generateSequentialIds(rows: string[][], prefix: string, count = 1): string[] {
+  const pattern = new RegExp(`^${prefix}-(\\d+)$`)
+  let maxNumber = 0
+
+  for (const row of rows.slice(1)) {
+    const match = (row[0] ?? '').match(pattern)
+    if (match) maxNumber = Math.max(maxNumber, Number(match[1]))
+  }
+
+  return Array.from({ length: count }, (_, index) => (
+    `${prefix}-${String(maxNumber + index + 1).padStart(6, '0')}`
+  ))
+}
+
+/** Nilai boolean di sheet: `TRUE` / `FALSE`. */
+export function toSheetBoolean(value: boolean): string {
+  return value ? 'TRUE' : 'FALSE'
+}
+
+export function fromSheetBoolean(value: string | undefined): boolean {
+  return (value ?? '').trim().toUpperCase() === 'TRUE'
+}

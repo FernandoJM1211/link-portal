@@ -64,6 +64,27 @@ Satu baris = satu tombol link. ID: `LNK-000001`.
 | I | `created_at` | — |
 | J | `updated_at` | — |
 
+## Perilaku Penulisan
+
+| Operasi | Yang terjadi di sheet |
+| --- | --- |
+| Buat portal / link | Baris baru ditambahkan di bawah (`append`). Link baru mendapat `sort_order` terbesar + 1. |
+| Ubah portal / link | Baris yang sama ditimpa; `updated_at` diperbarui. |
+| Atur urutan link | Hanya baris yang `sort_order`-nya berubah yang ditulis, dalam satu request. |
+| Hapus link | **Baris fisik dihapus** (bukan dikosongkan). |
+| Hapus portal | Semua baris link milik portal dihapus dulu, lalu baris portal. Aman diulang bila gagal di tengah. |
+| Duplikat portal | Satu baris portal baru (nonaktif) + semua link disalin dengan `sort_order` 1, 2, 3, ... |
+
+Normalisasi sebelum disimpan:
+- `code` → huruf kecil.
+- URL tanpa skema → diberi `https://` (mis. `instagram.com/unit` → `https://instagram.com/unit`).
+- `whatsapp` berupa nomor (`0812-3456-7890`) → `https://wa.me/6281234567890`.
+- `avatar_url` link berbagi Google Drive → `https://lh3.googleusercontent.com/d/<ID>`.
+- `email` → huruf kecil. `icon` → tanpa prefix `i-lucide-`, kosong = `link`.
+
+Edit manual di spreadsheet tetap terbaca, tetapi halaman publik baru berubah setelah
+cache habis (maks. 60 detik).
+
 ## Jika Kelak Butuh Multi-Admin
 
 Tambahkan sheet `users` (+ `portal_admins` untuk hak per portal). Sebaiknya di

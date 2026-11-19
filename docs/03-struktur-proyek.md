@@ -70,6 +70,18 @@ Belum ada — komponen portal/link dibuat di tahap 3.
 | `POST /api/auth/logout` | Publik | Hapus cookie sesi. |
 | `GET /api/auth/me` | Admin | Data sesi admin. |
 | `GET /api/admin/database-status` | Admin | Koneksi spreadsheet + kecocokan header setiap sheet. |
+| `GET /api/admin/portals` | Admin | Daftar portal + `link_count`, `active_link_count` (urut nama). |
+| `POST /api/admin/portals` | Admin | Buat portal. Body: `code, name, bio, avatarUrl, theme, instagram, whatsapp, website, youtube, email, isActive?` |
+| `GET /api/admin/portals/:portalId` | Admin | Detail portal + semua link (urut `sort_order`). |
+| `PATCH /api/admin/portals/:portalId` | Admin | Ubah profil & tampilan (body sama dengan buat; `isActive` diabaikan). |
+| `PATCH /api/admin/portals/:portalId/status` | Admin | Aktif/nonaktifkan. Body: `{ isActive }` |
+| `POST /api/admin/portals/:portalId/duplicate` | Admin | Salin portal + link ke portal baru (nonaktif). Body: `{ code, name }` |
+| `DELETE /api/admin/portals/:portalId` | Admin | Hapus permanen portal + semua link. Body: `{ confirmCode }` = kode portal |
+| `POST /api/admin/portals/:portalId/links` | Admin | Tambah link (di urutan terakhir). Body: `title, url, icon?, isActive?, isFeatured?` |
+| `PATCH /api/admin/portals/:portalId/links/:linkId` | Admin | Ubah sebagian field link (mis. toggle aktif/unggulan saja). |
+| `DELETE /api/admin/portals/:portalId/links/:linkId` | Admin | Hapus permanen satu link. |
+| `PUT /api/admin/portals/:portalId/links/order` | Admin | Simpan urutan. Body: `{ linkIds }` berisi **semua** ID link portal (409 bila tidak lengkap/usang). |
+| `GET /api/portals/:code` | **Publik** | Data halaman publik: portal aktif + link aktif saja (cache 60 detik). 404 bila tidak ada/nonaktif. |
 
 ### Services (`server/services/`)
 
@@ -77,19 +89,30 @@ Belum ada — komponen portal/link dibuat di tahap 3.
 | --- | --- |
 | `auth.service.ts` | `verifyAdminCredentials()`, `createAdminSessionToken()`, `readAdminSessionToken()` (cookie HMAC). |
 | `database-status.service.ts` | `checkDatabaseStatus()` — dipakai endpoint & `scripts/check-sheets.ts`. |
+| `portal.service.ts` | `listPortals()`, `getPortalDetail()`, `createPortal()`, `updatePortalProfile()`, `setPortalActive()`, `duplicatePortal()`, `deletePortalPermanently()`; cek kode unik (409). |
+| `link.service.ts` | `addLink()`, `editLink()`, `removeLink()`, `reorderLinks()`; batas `MAX_LINKS_PER_PORTAL` = 100. |
+| `public-portal.service.ts` | `getPublicPortal(code)` dengan cache memori 60 detik; `invalidatePublicPortalCache()` dipanggil setiap ada perubahan data. |
 
 ### Repositories (`server/repositories/`)
 
-Belum ada — dibuat di tahap 2 (`portal.repository.ts`, `link.repository.ts`).
+Kolom dipetakan dari `SHEET_HEADERS` (bukan indeks yang ditulis manual). Baris tanpa ID diabaikan.
+
+| File | Sheet | Fungsi |
+| --- | --- | --- |
+| `portal.repository.ts` | `portals` | `findAllPortals`, `findPortalById`, `findPortalByCode`, `createPortal`, `updatePortal` (sebagian kolom), `deletePortal` (hapus baris fisik). |
+| `link.repository.ts` | `links` | `findAllLinks`, `findLinksByPortalId` (terurut), `createLinks` (banyak sekaligus), `updateLinks` (banyak sekaligus, dibatasi satu portal), `deleteLinks`, `deleteLinksByPortalId`, `compareLinks`. |
 
 ### Utils (`server/utils/`, auto-import di server)
 
 | File | Fungsi |
 | --- | --- |
-| `google-sheets.ts` | Klien Sheets (JWT Service Account); `getSpreadsheetInfo`, `getSheetValues`, `appendSheetRow(s)`, `updateSheetRow(s)`. Tanpa auto-import Nuxt (bisa dipakai CLI). |
+| `google-sheets.ts` | Klien Sheets (JWT Service Account); `getSpreadsheetInfo`, `getSheetValues`, `appendSheetRow(s)`, `updateSheetRow(s)`, `deleteSheetRows` (hapus baris fisik), `generateSequentialIds`, `toSheetBoolean`/`fromSheetBoolean`. Tanpa auto-import Nuxt (bisa dipakai CLI). |
 | `sheet-schema.ts` | `SHEET_HEADERS` — urutan kolom resmi setiap sheet. |
 | `session.ts` | `requireAdmin()`, `setSessionCookie()`, `clearSessionCookie()`, `requireRouterParam()`, `getClientIp()`. |
 | `rate-limit.ts` | `assertRateLimit()`, `resetRateLimit()` (in-memory). |
+| `input.ts` | Helper validasi umum: `readRequiredText`, `readOptionalText`, `readOptionalBoolean`, `readOptionalUrl`, `readOptionalEmail`, `normalizeUrl` (tanpa skema → `https://`; tolak `javascript:`), `assertNoFieldErrors` (400 + `data.errors` per field). |
+| `portal-input.ts` | `readPortalInput(body)`, `readPortalCode()`; WhatsApp berupa nomor → `https://wa.me/62…`; link Drive logo → URL gambar langsung. |
+| `link-input.ts` | `readNewLinkInput(body)`, `readLinkChanges(body)`; URL boleh `https`, `mailto:`, `tel:`; ikon Lucide (prefix `i-lucide-` dibuang, default `link`). |
 
 ### Middleware (`server/middleware/`)
 
@@ -103,6 +126,7 @@ Belum ada — dibuat di tahap 2 (`portal.repository.ts`, `link.repository.ts`).
 | --- | --- |
 | `portal-code.ts` | Aturan kode portal: `PORTAL_CODE_PATTERN`, `RESERVED_PORTAL_CODES`, `normalizePortalCode()`, `getPortalCodeError()`. |
 | `portal-themes.ts` | `PORTAL_THEMES` (label + kelas Tailwind), `getPortalTheme()`, `isPortalTheme()`. |
+| `drive-image.ts` | `getGoogleDriveFileId(url)`, `toDirectImageUrl(url)` — link berbagi Drive → `https://lh3.googleusercontent.com/d/<ID>`. |
 
 ## `scripts/`
 
