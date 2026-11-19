@@ -8,23 +8,13 @@ import {
   updateSheetRows,
 } from '../utils/google-sheets'
 import { SHEET_HEADERS } from '../utils/sheet-schema'
+import type { Link } from '../../shared/types/portal'
+
+export type { Link }
 
 const SHEET_NAME = 'links'
 const HEADERS = SHEET_HEADERS.links
 const ID_PREFIX = 'LNK'
-
-export interface Link {
-  link_id: string
-  portal_id: string
-  title: string
-  url: string
-  icon: string
-  is_active: boolean
-  is_featured: boolean
-  sort_order: number
-  created_at: string
-  updated_at: string
-}
 
 /** Kolom yang boleh diisi saat membuat link (sisanya diatur repository). */
 export type LinkFields = Omit<Link, 'link_id' | 'created_at' | 'updated_at'>

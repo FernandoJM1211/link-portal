@@ -5,7 +5,7 @@
 | Hal | Aturan | Contoh |
 | --- | --- | --- |
 | Folder & file | kebab-case | `portal.service.ts` |
-| Komponen Vue | PascalCase | `LinkEditorModal.vue` |
+| Komponen Vue | PascalCase | `LinkFormModal.vue` |
 | Route admin | `/admin/<modul>` Bahasa Inggris | `/admin/portals`, `/admin/portals/[portalId]` |
 | Kolom sheet & field API respons | snake_case | `portal_id`, `is_active` |
 | Body request dari frontend | camelCase | `{ isActive, sortOrder }` |
@@ -94,8 +94,8 @@ dan buat proses **aman diulang**. Ubah banyak baris sekaligus dengan `updateShee
 - `<script setup lang="ts">`, Composition API.
 - Data awal halaman: `await useFetch(...)` (ikut SSR). Aksi pengguna: `$fetch(...)`.
 - Halaman admin memanggil `definePageMeta({ layout: 'admin' })`.
-- **Nama komponen otomatis = nama folder + nama file.** `components/portal/LinkEditorModal.vue`
-  dipanggil `<PortalLinkEditorModal>`. Cek `.nuxt/components.d.ts` jika ragu.
+- **Nama komponen otomatis = nama folder + nama file.** `components/portal/LinkFormModal.vue`
+  dipanggil `<PortalLinkFormModal>`. Cek `.nuxt/components.d.ts` jika ragu.
 - Tipe respons API ditulis sebagai `type` di halaman. Jika dipakai ≥ 2 tempat, pindahkan ke `shared/types/`.
 - Aturan yang berlaku di frontend **dan** backend (kode portal, tema) taruh di `shared/utils/`.
 

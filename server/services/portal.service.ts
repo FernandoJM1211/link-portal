@@ -14,16 +14,8 @@ import {
   findLinksByPortalId,
   type Link,
 } from '../repositories/link.repository'
+import type { PortalDetail, PortalSummary } from '../../shared/types/portal'
 import { invalidatePublicPortalCache } from './public-portal.service'
-
-export type PortalSummary = Portal & {
-  link_count: number
-  active_link_count: number
-}
-
-export type PortalDetail = Portal & {
-  links: Link[]
-}
 
 function notFound(): never {
   throw createError({

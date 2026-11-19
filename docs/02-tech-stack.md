@@ -10,6 +10,7 @@
 | Bahasa | **TypeScript** | 5.9 | `.ts` dan `<script setup lang="ts">` |
 | Ikon | **Lucide** (`@iconify-json/lucide`) | — | Format `i-lucide-<nama>`, cari di <https://lucide.dev>. Disajikan dari server sendiri (`icon.serverBundle`) karena nama ikon link dinamis dari sheet |
 | Database | **Google Sheets API** | `googleapis` 183 | Lewat Service Account (klien JWT) |
+| Drag & drop | **SortableJS** | 1.15 | Urutan tombol di editor portal; dimuat dinamis di browser (`portal/LinkManager.vue`) |
 | Script CLI | **tsx** | — | Menjalankan script TypeScript di `scripts/` |
 | Hosting | **Vercel** | — | Serverless; tidak ada penyimpanan file lokal |
 | Runtime | **Node.js** | ≥ 20.6 (dev: 24) | Perlu `--env-file` untuk script |

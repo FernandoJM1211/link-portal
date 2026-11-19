@@ -27,7 +27,7 @@ async function handleLogout() {
   <div class="min-h-screen bg-slate-100/90 pb-20 text-slate-800">
     <!-- Header atas -->
     <header class="sticky top-0 z-30 border-b border-slate-200 bg-white shadow-sm">
-      <div class="mx-auto flex h-16 max-w-5xl items-center justify-between gap-3 px-4 sm:px-6">
+      <div class="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-4 sm:px-6">
         <NuxtLink to="/admin" class="flex min-w-0 items-center gap-3">
           <div class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-indigo-600 text-white shadow-md shadow-indigo-600/20">
             <UIcon name="i-lucide-link" class="size-5" />
@@ -66,7 +66,7 @@ async function handleLogout() {
       </div>
     </header>
 
-    <main class="mx-auto mt-8 max-w-5xl px-4 sm:px-6">
+    <main class="mx-auto mt-8 max-w-6xl px-4 sm:px-6">
       <slot />
     </main>
   </div>

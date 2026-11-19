@@ -1,5 +1,6 @@
 import { findPortalByCode } from '../repositories/portal.repository'
 import { findLinksByPortalId } from '../repositories/link.repository'
+import type { PublicPortal } from '../../shared/types/portal'
 
 /**
  * Data halaman publik `/<kode>`: hanya portal AKTIF dan link AKTIF.
@@ -11,27 +12,7 @@ import { findLinksByPortalId } from '../repositories/link.repository'
 
 export const PUBLIC_CACHE_TTL_MS = 60 * 1000
 
-export type PublicPortal = {
-  code: string
-  name: string
-  bio: string
-  avatar_url: string
-  theme: string
-  socials: {
-    instagram: string
-    whatsapp: string
-    website: string
-    youtube: string
-    email: string
-  }
-  links: {
-    link_id: string
-    title: string
-    url: string
-    icon: string
-    is_featured: boolean
-  }[]
-}
+export type { PublicPortal }
 
 type CacheEntry = {
   /** `null` = portal tidak ada / tidak aktif (ikut di-cache agar 404 juga murah). */

@@ -8,27 +8,13 @@ import {
   updateSheetRow,
 } from '../utils/google-sheets'
 import { SHEET_HEADERS } from '../utils/sheet-schema'
+import type { Portal } from '../../shared/types/portal'
+
+export type { Portal }
 
 const SHEET_NAME = 'portals'
 const HEADERS = SHEET_HEADERS.portals
 const ID_PREFIX = 'PRT'
-
-export interface Portal {
-  portal_id: string
-  code: string
-  name: string
-  bio: string
-  avatar_url: string
-  theme: string
-  instagram: string
-  whatsapp: string
-  website: string
-  youtube: string
-  email: string
-  is_active: boolean
-  created_at: string
-  updated_at: string
-}
 
 /** Kolom yang boleh diisi saat membuat/mengubah portal (sisanya diatur repository). */
 export type PortalFields = Omit<Portal, 'portal_id' | 'created_at' | 'updated_at'>

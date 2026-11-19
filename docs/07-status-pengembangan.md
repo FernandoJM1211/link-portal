@@ -10,7 +10,7 @@ Legenda: ✅ selesai · 🚧 sedang dikerjakan · ❌ belum ada
 | --- | --- | --- |
 | 1. Fondasi | Dokumentasi, migrasi Nuxt 4 + Nuxt UI 4, koneksi Google Sheets, login admin | ✅ |
 | 2. Backend multi-portal | Repository `portals` & `links`, service + API CRUD portal & link, API publik + cache | ✅ |
-| 3. Dashboard admin | Daftar portal, buat/ubah/nonaktifkan/duplikat/hapus, editor profil & tema, kelola link (drag & drop, aktif, unggulan) | ❌ |
+| 3. Dashboard admin | Daftar portal, buat/ubah/nonaktifkan/duplikat/hapus, editor profil & tema, kelola link (drag & drop, aktif, unggulan), pratinjau langsung | ✅ |
 | 4. Halaman publik | `/<kode>` dengan tema, meta tag (preview WhatsApp), 404 | ❌ |
 | 5. Deploy | Repo GitHub + Vercel + environment variable | ❌ |
 
@@ -30,22 +30,27 @@ Legenda: ✅ selesai · 🚧 sedang dikerjakan · ❌ belum ada
 
 | Fitur | Backend (API) | Tampilan |
 | --- | --- | --- |
-| Daftar portal (+ jumlah link) | ✅ | ❌ |
-| Buat portal (kode, nama, tema, profil) | ✅ | ❌ |
-| Ubah profil & tema portal | ✅ | ❌ |
-| Aktif/nonaktifkan portal | ✅ | ❌ |
-| Hapus portal permanen (beserta link, konfirmasi kode) | ✅ | ❌ |
-| Duplikat portal (hasil nonaktif) | ✅ | ❌ |
-| Logo dari link Google Drive (dikonversi ke URL gambar langsung) | ✅ | ❌ |
-| Tambah/ubah/hapus link | ✅ | ❌ |
-| Urutkan link | ✅ | ❌ (drag & drop) |
-| Aktif/nonaktif & unggulan link | ✅ | ❌ |
-| Data halaman publik `/<kode>` (cache 60 detik) | ✅ | ❌ |
-| Pratinjau halaman publik dari dashboard | — | ❌ |
+| Daftar portal (+ jumlah link, pencarian bila > 3 portal) | ✅ | ✅ |
+| Buat portal (kode, nama, tema; dibuat nonaktif) | ✅ | ✅ |
+| Ubah profil & tema portal | ✅ | ✅ |
+| Aktif/nonaktifkan portal | ✅ | ✅ (daftar & editor) |
+| Hapus portal permanen (beserta link, konfirmasi kode) | ✅ | ✅ |
+| Duplikat portal (hasil nonaktif) | ✅ | ✅ |
+| Logo dari link Google Drive (dikonversi ke URL gambar langsung) | ✅ | ✅ (pratinjau logo + petunjuk berbagi) |
+| Tambah/ubah/hapus link | ✅ | ✅ |
+| Urutkan link | ✅ | ✅ (drag & drop, simpan otomatis) |
+| Aktif/nonaktif & unggulan link | ✅ | ✅ |
+| Pratinjau langsung di editor | — | ✅ (desktop: bingkai HP; HP: tombol Pratinjau) |
+| Salin link portal | — | ✅ |
+| Data halaman publik `/<kode>` (cache 60 detik) | ✅ | ❌ (tahap 4) |
 
 Pengujian tahap 2 (19 Nov 2026): 47 skenario end-to-end terhadap spreadsheet asli lolos
 (validasi input, kode duplikat, normalisasi URL/WA/Drive, urutan, publik hanya data aktif,
 duplikat, hapus permanen); data uji dibersihkan.
+
+Pengujian tahap 3 (19 Nov 2026): uji di Chrome headless (desktop 1366px & HP 390px) dengan data
+demo — drag & drop tersimpan sesuai urutan layar, pratinjau ikut berubah saat mengetik,
+tidak ada error console; data demo dibersihkan.
 
 ## Known Issues / Utang Teknis
 

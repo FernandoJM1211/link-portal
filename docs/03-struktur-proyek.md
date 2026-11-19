@@ -38,7 +38,10 @@ Peta seluruh file dan fungsinya. **Perbarui dokumen ini setiap menambah/menghapu
 | `app/assets/css/main.css` | Import Tailwind + Nuxt UI, `@source` folder `shared/`, font Plus Jakarta Sans, gaya dasar `body`. |
 | `app/middleware/auth.global.ts` | `/admin/**` tanpa login → `/login?redirect=…`; `/login` saat sudah login → `/admin`. Hanya UX. |
 | `app/composables/useAdminSession.ts` | `useAdminSession()` (data admin login, key `admin-session`) dan `logout()`. |
+| `app/composables/usePortalUrl.ts` | `usePortalUrl()` → `getPortalUrl(code)` / `getPortalUrlLabel(code)` dari domain yang sedang dibuka; `useCopyText()` salin + toast. |
 | `app/utils/api-error.ts` | `getApiErrorMessage(error, fallback)` — ambil `statusMessage` dari error `$fetch`. |
+| `app/utils/ui-classes.ts` | Kelas gaya desain awal: `inputClass`, `primaryButtonClass`, `secondaryButtonClass`, `dangerButtonClass`, `fieldClass(error)`; `getApiFieldErrors(error)` (error per field dari API). |
+| `app/utils/portal-draft.ts` | `PortalDraft` (isian form profil), `toPortalDraft()`, `isSameDraft()`, `toPreviewPortal(draft, links)` untuk pratinjau. |
 
 ### Layouts (`app/layouts/`)
 
@@ -46,11 +49,25 @@ Peta seluruh file dan fungsinya. **Perbarui dokumen ini setiap menambah/menghapu
 | --- | --- | --- |
 | `default.vue` | `/` | Pembungkus polos. |
 | `auth.vue` | `/login` | Latar `slate-100`, konten di tengah. |
-| `admin.vue` | `/admin/**` | Header atas sticky (logo indigo, "Dashboard Admin", username, tombol Keluar) + konten `max-w-5xl`. |
+| `admin.vue` | `/admin/**` | Header atas sticky (logo indigo, "Dashboard Admin", username, tombol Keluar) + konten `max-w-6xl`. |
 
 ### Komponen (`app/components/`)
 
-Belum ada — komponen portal/link dibuat di tahap 3.
+| File | Tag | Fungsi |
+| --- | --- | --- |
+| `base/Modal.vue` | `<BaseModal>` | Modal gaya awal (rounded-3xl) di atas `UModal`. Props: `v-model:open`, `title`, `description`, `dismissible`, `size` (`md`/`lg`); slot default + `footer`. |
+| `base/Field.vue` | `<BaseField>` | Label + slot input + error/hint. Props: `label`, `forId`, `error`, `hint`, `required`, `caps`. |
+| `base/ToggleSwitch.vue` | `<BaseToggleSwitch>` | Switch hijau. `v-model` boolean, `label` (aria), `disabled`. |
+| `admin/DatabaseStatusCard.vue` | `<AdminDatabaseStatusCard>` | Kartu Status Database (memuat `/api/admin/database-status`). |
+| `portal/PortalView.vue` | `<PortalView>` | Tampilan halaman portal (tema, avatar, sosial, tombol). Dipakai pratinjau (`preview`) dan halaman publik (tahap 4). Props: `portal: PublicPortal`, `preview?`. |
+| `portal/LinkManager.vue` | `<PortalLinkManager>` | Daftar tombol satu portal: drag & drop (sortablejs, simpan otomatis), toggle tampil/unggulan, edit, hapus (konfirmasi). `v-model:links`, `portalId`. |
+| `portal/LinkFormModal.vue` | `<PortalLinkFormModal>` | Modal tambah/edit tombol (judul, URL, ikon, tampil, unggulan). |
+| `portal/IconPicker.vue` | `<PortalIconPicker>` | Grid pilihan ikon dari `LINK_ICON_OPTIONS`. |
+| `portal/ThemePicker.vue` | `<PortalThemePicker>` | Pilihan tema dari `PORTAL_THEMES`. |
+| `portal/ProfileForm.vue` | `<PortalProfileForm>` | Form Profil & Tampilan; `v-model:draft` (dipakai pratinjau langsung), simpan via PATCH; peringatan bila kode diubah; bantuan link logo Google Drive. |
+| `portal/CreatePortalModal.vue` | `<PortalCreatePortalModal>` | Buat portal (kode, nama, tema); dibuat nonaktif. Emit `created`. |
+| `portal/DuplicatePortalModal.vue` | `<PortalDuplicatePortalModal>` | Duplikat portal (kode & nama baru). Emit `duplicated`. |
+| `portal/DeletePortalModal.vue` | `<PortalDeletePortalModal>` | Hapus permanen dengan mengetik ulang kode. Emit `deleted`. |
 
 ### Halaman (`app/pages/`)
 
@@ -58,7 +75,8 @@ Belum ada — komponen portal/link dibuat di tahap 3.
 | --- | --- | --- |
 | `/` | `index.vue` | Halaman netral (bukan daftar portal). |
 | `/login` | `login.vue` | Form login admin; kembali ke `redirect` (hanya `/admin/**`). |
-| `/admin` | `admin/index.vue` | Beranda admin + kartu **Status Database**. |
+| `/admin` | `admin/index.vue` | Tab **Daftar Portal** (kartu portal, cari, buat, aktif/nonaktif, menu salin/duplikat/hapus) dan **Status Database** (`?tab=database`). |
+| `/admin/portals/:portalId` | `admin/portals/[portalId].vue` | Editor portal: kepala (status, salin link, lihat publik, duplikat, hapus), tab **Kelola Tombol** & **Profil & Tampilan** (`?tab=profile`), pratinjau HP di kanan (desktop) / tombol Pratinjau melayang (HP). Peringatan saat keluar dengan perubahan profil belum disimpan. |
 
 ## `server/` — Backend
 
@@ -127,6 +145,13 @@ Kolom dipetakan dari `SHEET_HEADERS` (bukan indeks yang ditulis manual). Baris t
 | `portal-code.ts` | Aturan kode portal: `PORTAL_CODE_PATTERN`, `RESERVED_PORTAL_CODES`, `normalizePortalCode()`, `getPortalCodeError()`. |
 | `portal-themes.ts` | `PORTAL_THEMES` (label + kelas Tailwind), `getPortalTheme()`, `isPortalTheme()`. |
 | `drive-image.ts` | `getGoogleDriveFileId(url)`, `toDirectImageUrl(url)` — link berbagi Drive → `https://lh3.googleusercontent.com/d/<ID>`. |
+| `link-icons.ts` | `LINK_ICON_OPTIONS` (30 ikon Lucide + label), `toLucideIconName(icon)` → `i-lucide-<icon>`. |
+
+## `shared/types/`
+
+| File | Fungsi |
+| --- | --- |
+| `portal.ts` | Tipe `Portal`, `Link`, `PortalSummary`, `PortalDetail`, `PublicPortal` — satu sumber untuk backend & frontend (import: `~~/shared/types/portal` di app, relatif di server). |
 
 ## `scripts/`
 
