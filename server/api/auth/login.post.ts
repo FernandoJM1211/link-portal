@@ -1,33 +1,59 @@
-export default defineEventHandler(async (event) => {
-  const body = await readBody(event)
-  const config = useRuntimeConfig()
+import {
+  createAdminSessionToken,
+  verifyAdminCredentials,
+} from '../../services/auth.service'
 
-  if (!body || !body.username || !body.password) {
+const LOGIN_WINDOW_MS = 15 * 60 * 1000
+const LOGIN_LIMIT_PER_IP = 10
+
+export default defineEventHandler(async (event) => {
+  const body = await readBody<{
+    username?: unknown
+    password?: unknown
+  }>(event)
+
+  if (
+    typeof body?.username !== 'string' ||
+    typeof body?.password !== 'string' ||
+    !body.username.trim() ||
+    !body.password ||
+    body.username.length > 100 ||
+    body.password.length > 1024
+  ) {
     throw createError({
       statusCode: 400,
-      statusMessage: 'Username dan Password wajib diisi.'
+      statusMessage: 'Username dan kata sandi wajib diisi.',
     })
   }
 
-  const isValidUser = body.username.trim() === config.adminUsername
-  const isValidPass = body.password === config.adminPassword
+  // Hanya ada satu akun, jadi pembatasan cukup per IP untuk mencegah brute force.
+  const rateLimitKey = `login:ip:${getClientIp(event)}`
 
-  if (!isValidUser || !isValidPass) {
+  assertRateLimit(
+    rateLimitKey,
+    LOGIN_LIMIT_PER_IP,
+    LOGIN_WINDOW_MS,
+    'Terlalu banyak percobaan login. Silakan coba lagi dalam 15 menit.',
+  )
+
+  if (!verifyAdminCredentials(body.username.trim(), body.password)) {
     throw createError({
       statusCode: 401,
-      statusMessage: 'Username atau Password salah.'
+      statusMessage: 'Username atau kata sandi tidak sesuai.',
     })
   }
 
-  const token = Buffer.from(`${config.adminUsername}:${config.adminPassword}:${config.jwtSecret}`).toString('base64')
+  resetRateLimit(rateLimitKey)
 
-  // Set HTTP-only secure cookie for 7 days
-  setCookie(event, 'admin_token', token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
-    maxAge: 60 * 60 * 24 * 7 // 7 days
-  })
+  const { token, session } = createAdminSessionToken()
+  setSessionCookie(event, token, session.expiresAt)
 
-  return { success: true, message: 'Login berhasil!' }
+  return {
+    success: true,
+    message: 'Login berhasil.',
+    data: {
+      username: session.username,
+      expiresAt: new Date(session.expiresAt).toISOString(),
+    },
+  }
 })

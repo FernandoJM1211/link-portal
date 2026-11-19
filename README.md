@@ -1,54 +1,31 @@
-# 🌐 Link Portal Unit (Self-Hosted Linktree Clone)
+# Link Portal
 
-Aplikasi portal tautan resmi untuk unit/tim kerja, dibuat menggunakan **Nuxt 3**, **Tailwind CSS**, dan siap diintegrasikan dengan **Google Sheets** sebagai database.
+Pengganti Linktree yang di-host sendiri (tanpa iklan). Satu admin mengelola banyak portal;
+setiap portal punya alamat `domain/<kode>`, profil, tema warna, dan daftar tombol link sendiri.
+Data disimpan di **Google Sheets**.
 
-## ✨ Fitur Utama
+Dibangun dengan **Nuxt 4**, **Nuxt UI 4**, dan **Tailwind CSS 4**; di-deploy ke **Vercel**.
 
-- 📱 **Halaman Publik Modern & Responsif**: Tampilan mobile-first yang bersih dengan berbagai pilihan tema warna (Indigo, Emerald, Sunset, Ocean, Midnight).
-- 🛠️ **Dashboard Admin (`/admin`)**:
-  - Tambah, edit, dan hapus tombol secara dinamis tanpa batas.
-  - **Drag & Drop / Reorder**: Urutkan posisi tombol hanya dengan menggeser (drag handle), otomatis tersimpan secara real-time.
-  - **Toggle Cepat**: Aktifkan atau sembunyikan tombol dalam 1 klik tanpa harus menghapusnya.
-  - **Tombol Unggulan (Featured)**: Sorot tombol prioritas tinggi dengan animasi khusus.
-  - **Pengaturan Profil**: Nama unit, bio, logo/avatar, dan tautan media sosial (WhatsApp, Instagram, Website, Email, YouTube).
-- 💾 **Dual Storage Engine**:
-  - **Mode Lokal (Default)**: Langsung berjalan menggunakan file data lokal (`data/data.json`) tanpa perlu setup DB.
-  - **Mode Google Sheets**: Cukup masukkan Service Account & ID Spreadsheet di `.env`, sistem otomatis membaca & menulis langsung ke spreadsheet.
+## Setup Lokal
 
----
-
-## 🚀 Cara Menjalankan Aplikasi
-
-1. **Install Dependencies**:
+1. Install dependency:
    ```bash
    npm install
    ```
-
-2. **Jalankan Development Server**:
+2. Salin `.env.example` menjadi `.env`, lalu isi (penjelasan tiap variabel ada di
+   [docs/02-tech-stack.md](docs/02-tech-stack.md)).
+3. Siapkan spreadsheet dengan sheet `portals` dan `links` sesuai
+   [docs/04-database.md](docs/04-database.md), lalu bagikan ke email Service Account sebagai **Editor**.
+4. Periksa koneksi:
+   ```bash
+   npm run check-sheets
+   ```
+5. Jalankan:
    ```bash
    npm run dev
    ```
-   Buka browser di [http://localhost:3000](http://localhost:3000).
+   Buka <http://localhost:3000/login> dan masuk dengan `ADMIN_USERNAME` / `ADMIN_PASSWORD`.
 
-3. **Akses Dashboard Admin**:
-   - Akses via URL langsung: [http://localhost:3000/admin](http://localhost:3000/admin) (tanpa tombol di halaman publik agar aman).
-   - **Username**: `admin`
-   - **Password**: `admin123`
-   - Kredensial dapat diubah kapan saja di file `.env`.
+## Dokumentasi
 
----
-
-## 📊 Cara Mengaktifkan Google Sheets (Opsional / Kapanpun Siap)
-
-Jika ingin data tombol tersinkronisasi ke Google Spreadsheet:
-
-1. Buat Spreadsheet baru di Google Drive.
-2. Buat Service Account di Google Cloud Console, aktifkan **Google Sheets API**, lalu unduh JSON Key.
-3. Bagikan (*Share*) spreadsheet Anda ke alamat email Service Account sebagai **Editor**.
-4. Buka file `.env` di folder ini, lalu isi:
-   ```env
-   GOOGLE_SHEET_ID=id_spreadsheet_anda
-   GOOGLE_SERVICE_ACCOUNT_EMAIL=email-service-account@project.iam.gserviceaccount.com
-   GOOGLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgk...-----END PRIVATE KEY-----\n"
-   ```
-5. Simpan file `.env` dan restart server Nuxt.
+Lihat [CLAUDE.md](CLAUDE.md) dan folder [docs/](docs/).

@@ -1,22 +1,47 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  compatibilityDate: '2024-11-01',
+  compatibilityDate: '2025-07-15',
+
+  modules: ['@nuxt/ui'],
+
+  css: ['~/assets/css/main.css'],
+
+  colorMode: {
+    preference: 'light',
+  },
+
   devtools: { enabled: true },
-  modules: [
-    '@nuxtjs/tailwindcss'
-  ],
-  css: [
-    '~/assets/css/main.css'
-  ],
-  runtimeConfig: {
-    adminUsername: process.env.ADMIN_USERNAME || 'admin',
-    adminPassword: process.env.ADMIN_PASSWORD || 'admin123',
-    jwtSecret: process.env.JWT_SECRET || 'link-portal-super-secret-key-change-this',
-    googleSheetId: process.env.GOOGLE_SHEET_ID || '',
-    googleServiceAccountEmail: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL || '',
-    googlePrivateKey: process.env.GOOGLE_PRIVATE_KEY || '',
-    public: {
-      appName: 'Unit Link Portal'
-    }
-  }
+
+  app: {
+    head: {
+      htmlAttrs: { lang: 'id' },
+      link: [
+        { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
+      ],
+    },
+  },
+
+  icon: {
+    // Nama ikon link berasal dari spreadsheet (dinamis), jadi koleksi Lucide
+    // disajikan dari server sendiri, bukan dari API Iconify publik.
+    serverBundle: {
+      collections: ['lucide'],
+    },
+  },
+
+  routeRules: {
+    '/**': {
+      headers: {
+        'X-Frame-Options': 'DENY',
+        'X-Content-Type-Options': 'nosniff',
+        'Referrer-Policy': 'strict-origin-when-cross-origin',
+        'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
+      },
+    },
+    '/api/**': {
+      headers: {
+        'Cache-Control': 'no-store',
+      },
+    },
+  },
 })

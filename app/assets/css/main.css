@@ -1,0 +1,16 @@
+@import "tailwindcss";
+@import "@nuxt/ui";
+
+/* Kelas tema portal ada di shared/utils/portal-themes.ts (di luar folder app/). */
+@source "../../../shared";
+
+@theme {
+  /* Diunduh otomatis oleh @nuxt/fonts (bawaan Nuxt UI). */
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+}
+
+@layer base {
+  body {
+    @apply min-h-screen bg-slate-100 text-slate-800 antialiased selection:bg-indigo-500 selection:text-white;
+  }
+}

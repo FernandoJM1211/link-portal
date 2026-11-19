@@ -1,4 +1,8 @@
 export default defineEventHandler((event) => {
-  deleteCookie(event, 'admin_token')
-  return { success: true }
+  clearSessionCookie(event)
+
+  return {
+    success: true,
+    message: 'Anda telah keluar.',
+  }
 })
