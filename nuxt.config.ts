@@ -9,6 +9,7 @@ export default defineNuxtConfig({
     '~/assets/css/main.css'
   ],
   runtimeConfig: {
+    adminUsername: process.env.ADMIN_USERNAME || 'admin',
     adminPassword: process.env.ADMIN_PASSWORD || 'admin123',
     jwtSecret: process.env.JWT_SECRET || 'link-portal-super-secret-key-change-this',
     googleSheetId: process.env.GOOGLE_SHEET_ID || '',

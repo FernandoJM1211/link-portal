@@ -31,8 +31,10 @@ Aplikasi portal tautan resmi untuk unit/tim kerja, dibuat menggunakan **Nuxt 3**
    Buka browser di [http://localhost:3000](http://localhost:3000).
 
 3. **Akses Dashboard Admin**:
-   - URL: [http://localhost:3000/admin](http://localhost:3000/admin)
-   - Password default: `admin123` (bisa diubah di file `.env`).
+   - Akses via URL langsung: [http://localhost:3000/admin](http://localhost:3000/admin) (tanpa tombol di halaman publik agar aman).
+   - **Username**: `admin`
+   - **Password**: `admin123`
+   - Kredensial dapat diubah kapan saja di file `.env`.
 
 ---
 

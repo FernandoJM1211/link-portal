@@ -9,16 +9,29 @@
         <p class="text-sm text-slate-500 mt-1">Masukkan kata sandi untuk mengelola portal tautan unit Anda</p>
       </div>
 
-      <form @submit.prevent="handleLogin" class="space-y-5">
+      <form @submit.prevent="handleLogin" class="space-y-4">
         <div>
-          <label class="block text-sm font-semibold text-slate-700 mb-2">Kata Sandi Admin</label>
+          <label class="block text-sm font-semibold text-slate-700 mb-1.5">Username Admin</label>
+          <input
+            v-model="username"
+            type="text"
+            placeholder="Masukkan username admin..."
+            class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition text-sm text-slate-900"
+            required
+            autocomplete="username"
+          />
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold text-slate-700 mb-1.5">Kata Sandi (Password)</label>
           <div class="relative">
             <input
               v-model="password"
               :type="showPassword ? 'text' : 'password'"
               placeholder="Masukkan password admin..."
-              class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition text-sm pr-12 text-slate-900"
+              class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition text-sm pr-12 text-slate-900"
               required
+              autocomplete="current-password"
             />
             <button
               type="button"
@@ -29,7 +42,7 @@
             </button>
           </div>
           <p class="text-[11px] text-slate-400 mt-1.5">
-            Default awal: <span class="font-mono bg-slate-100 px-1 py-0.5 rounded text-slate-600">admin123</span> (bisa diubah di file <code class="font-mono">.env</code>)
+            Default: <span class="font-mono bg-slate-100 px-1 py-0.5 rounded text-slate-600">admin / admin123</span> (dapat diubah di file <code class="font-mono">.env</code>)
           </p>
         </div>
 
@@ -60,6 +73,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
+const username = ref('')
 const password = ref('')
 const showPassword = ref(false)
 const loading = ref(false)
@@ -71,7 +85,10 @@ async function handleLogin() {
   try {
     const res = await $fetch<{ success: boolean; message: string }>('/api/auth/login', {
       method: 'POST',
-      body: { password: password.value }
+      body: {
+        username: username.value,
+        password: password.value
+      }
     })
     if (res.success) {
       await navigateTo('/admin')

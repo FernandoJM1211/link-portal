@@ -8,8 +8,8 @@ export function verifyAdminAuth(event: H3Event): boolean {
     return false
   }
 
-  // Simple and secure token check based on hashed or secret comparison
-  const expectedToken = Buffer.from(`${config.adminPassword}:${config.jwtSecret}`).toString('base64')
+  // Secure token comparison including username
+  const expectedToken = Buffer.from(`${config.adminUsername}:${config.adminPassword}:${config.jwtSecret}`).toString('base64')
   return token === expectedToken
 }
 

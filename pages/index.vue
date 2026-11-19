@@ -152,16 +152,8 @@
     </div>
 
     <!-- Footer -->
-    <footer class="mt-12 text-center text-xs text-white/70 space-y-2">
+    <footer class="mt-12 text-center text-xs text-white/70 pb-4">
       <p class="font-medium">&copy; {{ new Date().getFullYear() }} {{ profile.name }}</p>
-      <div>
-        <NuxtLink
-          to="/admin"
-          class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-black/20 hover:bg-black/35 text-white/80 hover:text-white transition backdrop-blur-sm"
-        >
-          <span>Kelola Halaman (Admin)</span>
-        </NuxtLink>
-      </div>
     </footer>
   </div>
 </template>

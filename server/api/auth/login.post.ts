@@ -2,21 +2,24 @@ export default defineEventHandler(async (event) => {
   const body = await readBody(event)
   const config = useRuntimeConfig()
 
-  if (!body || !body.password) {
+  if (!body || !body.username || !body.password) {
     throw createError({
       statusCode: 400,
-      statusMessage: 'Password wajib diisi.'
+      statusMessage: 'Username dan Password wajib diisi.'
     })
   }
 
-  if (body.password !== config.adminPassword) {
+  const isValidUser = body.username.trim() === config.adminUsername
+  const isValidPass = body.password === config.adminPassword
+
+  if (!isValidUser || !isValidPass) {
     throw createError({
       statusCode: 401,
-      statusMessage: 'Password admin salah.'
+      statusMessage: 'Username atau Password salah.'
     })
   }
 
-  const token = Buffer.from(`${config.adminPassword}:${config.jwtSecret}`).toString('base64')
+  const token = Buffer.from(`${config.adminUsername}:${config.adminPassword}:${config.jwtSecret}`).toString('base64')
 
   // Set HTTP-only secure cookie for 7 days
   setCookie(event, 'admin_token', token, {
