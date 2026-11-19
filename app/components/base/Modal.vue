@@ -26,12 +26,13 @@ withDefaults(defineProps<{
     :dismissible="dismissible"
     :ui="{
       overlay: 'bg-slate-900/60 backdrop-blur-sm',
-      content: `rounded-3xl border border-slate-100 shadow-2xl ring-0 divide-y-0 ${size === 'lg' ? 'sm:max-w-2xl' : 'sm:max-w-md'}`,
+      content: `flex max-h-[calc(100dvh-2rem)] flex-col overflow-hidden rounded-3xl border border-slate-100 shadow-2xl ring-0 divide-y-0 sm:max-h-[calc(100dvh-4rem)] ${size === 'lg' ? 'sm:max-w-2xl' : 'sm:max-w-md'}`,
     }"
   >
+    <!-- Judul & tombol tetap terlihat; hanya isi di tengah yang di-scroll bila layar pendek. -->
     <template #content>
-      <div class="space-y-5 p-6 sm:p-7">
-        <div class="flex items-start justify-between gap-4 border-b border-slate-100 pb-4">
+      <div class="flex min-h-0 flex-1 flex-col">
+        <div class="flex shrink-0 items-start justify-between gap-4 border-b border-slate-100 px-6 pb-4 pt-6 sm:px-7 sm:pt-7">
           <div class="min-w-0">
             <h3 class="text-base font-bold text-slate-900">
               {{ title }}
@@ -51,9 +52,11 @@ withDefaults(defineProps<{
           </button>
         </div>
 
-        <slot />
+        <div class="min-h-0 flex-1 space-y-5 overflow-y-auto overscroll-contain px-6 py-5 sm:px-7">
+          <slot />
+        </div>
 
-        <div v-if="$slots.footer" class="flex justify-end gap-2.5 pt-1">
+        <div v-if="$slots.footer" class="flex shrink-0 justify-end gap-2.5 border-t border-slate-100 px-6 pb-6 pt-4 sm:px-7 sm:pb-7">
           <slot name="footer" />
         </div>
       </div>
