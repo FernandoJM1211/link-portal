@@ -12,7 +12,7 @@ Legenda: ✅ selesai · 🚧 sedang dikerjakan · ❌ belum ada
 | 2. Backend multi-portal | Repository `portals` & `links`, service + API CRUD portal & link, API publik + cache | ✅ |
 | 3. Dashboard admin | Daftar portal, buat/ubah/nonaktifkan/duplikat/hapus, editor profil & tema, kelola link (drag & drop, aktif, unggulan), pratinjau langsung | ✅ |
 | 4. Halaman publik | `/<kode>` SSR dengan tema, meta tag Open Graph (preview WhatsApp), cache CDN 60 detik, 404 | ✅ |
-| 5. Deploy | Repo GitHub + Vercel + environment variable | ❌ |
+| 5. Deploy | Repo GitHub ✅ (`FernandoJM1211/link-portal`, private) · Vercel + environment variable (menunggu pemilik proyek) | 🚧 |
 
 ## Fitur
 
@@ -68,6 +68,7 @@ tanpa error console. Halaman 404 tampil benar di browser (teksnya dirender di si
 | 3 | Logout hanya menghapus cookie di browser itu | Cookie yang tercuri tetap berlaku sampai kedaluwarsa (8 jam) | Ganti `SESSION_SECRET` untuk mencabut semua sesi |
 | 4 | Data lama di `data/data.json` (versi sebelum migrasi) belum dipindah ke sheet | — | Bisa dibuat ulang lewat dashboard, atau diimpor dengan script bila diperlukan |
 | 5 | Cache halaman publik (memori server 60 detik + CDN Vercel `s-maxage=60, stale-while-revalidate=300`) | Perubahan dari admin baru terlihat publik setelah ±1–2 menit (pengunjung pertama setelah cache habis bisa masih melihat versi lama sekali) | Terima; pratinjau di dashboard selalu terbaru. Bila perlu instan, kurangi `s-maxage` di `app/pages/[code].vue` |
+| 9 | Spreadsheet development = production | Uji coba lokal mengubah data asli | Pakai portal nonaktif untuk uji, atau buat spreadsheet dev terpisah |
 | 8 | Ukuran build ±44 MB, sebagian besar paket `googleapis` | Cold start Vercel sedikit lebih lama | Bisa diganti `@googleapis/sheets` (lebih kecil) bila terasa lambat |
 | 6 | Duplikat portal: portal dibuat dulu, lalu link | Bila penulisan link gagal, portal salinan ada tanpa link | Hapus portal salinan lalu ulangi |
 | 7 | Nama ikon tidak dicek terhadap daftar Lucide di server | Ikon salah ketik tidak tampil | Dashboard memakai pemilih ikon (tahap 3) |

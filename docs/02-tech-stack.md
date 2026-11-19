@@ -69,11 +69,47 @@ Proyek ini memakai Service Account sendiri (nama `link-portal`; email ada di fie
 file JSON), terpisah dari CMSP agar kebocoran kunci satu proyek tidak membuka data proyek lain.
 Spreadsheet harus dibagikan ke email tersebut sebagai **Editor**.
 
-Untuk Vercel, ubah file JSON menjadi base64 lalu isi `GOOGLE_SERVICE_ACCOUNT_JSON`:
+Untuk Vercel, ubah file JSON menjadi base64 lalu isi `GOOGLE_SERVICE_ACCOUNT_JSON`.
+Perintah ini langsung menyalin hasilnya ke clipboard (tidak tampil di layar):
 
 ```powershell
-[Convert]::ToBase64String([IO.File]::ReadAllBytes("C:\path\ke\kredensial.json"))
+[Convert]::ToBase64String([IO.File]::ReadAllBytes("C:\path\ke\kredensial.json")) | Set-Clipboard
 ```
+
+## Deploy ke Vercel
+
+- Repo: `https://github.com/FernandoJM1211/link-portal` (private), branch `main`.
+- Domain: bawaan `<nama-proyek>.vercel.app`.
+- Nuxt terdeteksi otomatis (Framework Preset **Nuxt.js**, build `nuxt build`); tidak perlu `vercel.json`.
+- Setiap `git push` ke `main` otomatis memicu deploy ulang.
+
+### Langkah pertama kali
+
+1. Login <https://vercel.com> dengan akun GitHub → **Add New… → Project** → pilih repo `link-portal` → **Import**.
+2. Sebelum klik Deploy, buka **Environment Variables** dan isi:
+
+   | Nama | Nilai |
+   | --- | --- |
+   | `ADMIN_USERNAME` | username admin |
+   | `ADMIN_PASSWORD` | kata sandi **kuat & baru** (jangan `admin123`) |
+   | `SESSION_SECRET` | string acak baru (perintah di atas), **beda** dari `.env` lokal |
+   | `GOOGLE_SPREADSHEET_ID` | sama dengan `.env` |
+   | `GOOGLE_SERVICE_ACCOUNT_JSON` | hasil base64 file kredensial (lihat di atas) |
+   | `APP_BASE_URL` | `https://<nama-proyek>.vercel.app` (isi setelah alamat diketahui) |
+
+   `GOOGLE_APPLICATION_CREDENTIALS` **tidak** diisi di Vercel.
+3. Klik **Deploy**. Setelah selesai, catat alamat `*.vercel.app`, isi/perbarui `APP_BASE_URL`,
+   lalu **Deployments → ⋯ → Redeploy** agar env baru terpakai.
+4. (Disarankan) **Settings → Functions → Function Region → Singapore (sin1)** agar lebih cepat
+   untuk pengunjung Indonesia, lalu redeploy.
+
+### Catatan
+
+- Mengubah environment variable di Vercel baru berlaku setelah **redeploy**.
+- Spreadsheet lokal dan production **sama** (satu `GOOGLE_SPREADSHEET_ID`): data yang diubah saat
+  `npm run dev` langsung tampil di production. Untuk uji coba, pakai portal nonaktif atau buat
+  spreadsheet terpisah untuk development.
+- Paket gratis Vercel (Hobby) ditujukan untuk penggunaan **non-komersial**.
 
 ## Tool Pengembangan
 
