@@ -102,14 +102,52 @@ export async function getSpreadsheetInfo(): Promise<{ title: string, sheetNames:
   }
 }
 
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+
+/** Error sementara dari Google (kuota habis / server sibuk) yang layak dicoba ulang. */
+function isRetryableError(error: unknown): boolean {
+  const code = Number((error as { code?: unknown, status?: unknown } | null)?.code ?? (error as { status?: unknown } | null)?.status)
+  return code === 429 || code === 500 || code === 502 || code === 503 || code === 504
+}
+
+/**
+ * Menjalankan operasi BACA dengan coba ulang (jeda 0,5 → 1 → 2 detik + acak)
+ * saat kuota Google Sheets terlampaui atau server Google sibuk.
+ * Jangan dipakai untuk operasi tulis `append` (bisa menghasilkan baris ganda).
+ */
+async function withReadRetry<T>(operation: () => Promise<T>, attempts = 4): Promise<T> {
+  for (let attempt = 1; ; attempt++) {
+    try {
+      return await operation()
+    } catch (error) {
+      if (attempt >= attempts || !isRetryableError(error)) throw error
+      await sleep(500 * 2 ** (attempt - 1) + Math.random() * 250)
+    }
+  }
+}
+
 /** Seluruh isi sheet (baris 1 = header). Nilai selalu string. */
 export async function getSheetValues(sheetName: string): Promise<string[][]> {
-  const response = await getSheetsClient().spreadsheets.values.get({
+  const response = await withReadRetry(() => getSheetsClient().spreadsheets.values.get({
     spreadsheetId: getSpreadsheetId(),
     range: quoteSheetName(sheetName),
-  })
+  }))
 
   return (response.data.values ?? []) as string[][]
+}
+
+/**
+ * Isi beberapa sheet sekaligus dalam SATU request (hemat kuota).
+ * Hasil berurutan sesuai `sheetNames`.
+ */
+export async function getMultipleSheetValues(sheetNames: string[]): Promise<string[][][]> {
+  const response = await withReadRetry(() => getSheetsClient().spreadsheets.values.batchGet({
+    spreadsheetId: getSpreadsheetId(),
+    ranges: sheetNames.map(quoteSheetName),
+  }))
+
+  const valueRanges = response.data.valueRanges ?? []
+  return sheetNames.map((_, index) => (valueRanges[index]?.values ?? []) as string[][])
 }
 
 export async function appendSheetRows(sheetName: string, rows: string[][]): Promise<void> {

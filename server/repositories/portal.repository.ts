@@ -53,8 +53,7 @@ function portalToRow(portal: Portal): string[] {
   })
 }
 
-async function readPortalRecords(): Promise<{ rows: string[][], records: PortalRecord[] }> {
-  const rows = await getSheetValues(SHEET_NAME)
+function toPortalRecords(rows: string[][]): PortalRecord[] {
   const records: PortalRecord[] = []
 
   rows.forEach((row, index) => {
@@ -63,7 +62,17 @@ async function readPortalRecords(): Promise<{ rows: string[][], records: PortalR
     records.push({ portal: rowToPortal(row), rowNumber: index + 1 })
   })
 
-  return { rows, records }
+  return records
+}
+
+/** Mengubah isi mentah sheet `portals` (termasuk header) menjadi daftar portal. */
+export function parsePortalRows(rows: string[][]): Portal[] {
+  return toPortalRecords(rows).map((record) => record.portal)
+}
+
+async function readPortalRecords(): Promise<{ rows: string[][], records: PortalRecord[] }> {
+  const rows = await getSheetValues(SHEET_NAME)
+  return { rows, records: toPortalRecords(rows) }
 }
 
 async function findPortalRecordById(portalId: string): Promise<PortalRecord | null> {

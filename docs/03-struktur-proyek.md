@@ -110,7 +110,7 @@ Peta seluruh file dan fungsinya. **Perbarui dokumen ini setiap menambah/menghapu
 | `database-status.service.ts` | `checkDatabaseStatus()` — dipakai endpoint & `scripts/check-sheets.ts`. |
 | `portal.service.ts` | `listPortals()`, `getPortalDetail()`, `createPortal()`, `updatePortalProfile()`, `setPortalActive()`, `duplicatePortal()`, `deletePortalPermanently()`; cek kode unik (409). |
 | `link.service.ts` | `addLink()`, `editLink()`, `removeLink()`, `reorderLinks()`; batas `MAX_LINKS_PER_PORTAL` = 100. |
-| `public-portal.service.ts` | `getPublicPortal(code)` dengan cache memori 60 detik; `invalidatePublicPortalCache()` dipanggil setiap ada perubahan data. |
+| `public-portal.service.ts` | `getPublicPortal(code)`: cache memori 60 detik, **single-flight** (banyak pengunjung bersamaan = 1 baca Sheets), dan **data lama tetap disajikan** bila Google Sheets error (maks. 24 jam). `invalidatePublicPortalCache()` dipanggil setiap ada perubahan data. |
 
 ### Repositories (`server/repositories/`)
 
@@ -119,13 +119,14 @@ Kolom dipetakan dari `SHEET_HEADERS` (bukan indeks yang ditulis manual). Baris t
 | File | Sheet | Fungsi |
 | --- | --- | --- |
 | `portal.repository.ts` | `portals` | `findAllPortals`, `findPortalById`, `findPortalByCode`, `createPortal`, `updatePortal` (sebagian kolom), `deletePortal` (hapus baris fisik). |
+| `public-portal.repository.ts` | `portals` + `links` | `findPortalWithLinksByCode(code)` — kedua sheet dibaca dalam **1 request** (`batchGet`). |
 | `link.repository.ts` | `links` | `findAllLinks`, `findLinksByPortalId` (terurut), `createLinks` (banyak sekaligus), `updateLinks` (banyak sekaligus, dibatasi satu portal), `deleteLinks`, `deleteLinksByPortalId`, `compareLinks`. |
 
 ### Utils (`server/utils/`, auto-import di server)
 
 | File | Fungsi |
 | --- | --- |
-| `google-sheets.ts` | Klien Sheets (JWT Service Account); `getSpreadsheetInfo`, `getSheetValues`, `appendSheetRow(s)`, `updateSheetRow(s)`, `deleteSheetRows` (hapus baris fisik), `generateSequentialIds`, `toSheetBoolean`/`fromSheetBoolean`. Tanpa auto-import Nuxt (bisa dipakai CLI). |
+| `google-sheets.ts` | Klien Sheets (JWT Service Account); `getSpreadsheetInfo`, `getSheetValues`, `getMultipleSheetValues` (batchGet), coba ulang otomatis untuk operasi baca saat 429/5xx, `appendSheetRow(s)`, `updateSheetRow(s)`, `deleteSheetRows` (hapus baris fisik), `generateSequentialIds`, `toSheetBoolean`/`fromSheetBoolean`. Tanpa auto-import Nuxt (bisa dipakai CLI). |
 | `sheet-schema.ts` | `SHEET_HEADERS` — urutan kolom resmi setiap sheet. |
 | `session.ts` | `requireAdmin()`, `setSessionCookie()`, `clearSessionCookie()`, `requireRouterParam()`, `getClientIp()`. |
 | `rate-limit.ts` | `assertRateLimit()`, `resetRateLimit()` (in-memory). |

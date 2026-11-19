@@ -51,8 +51,7 @@ function linkToRow(link: Link): string[] {
   })
 }
 
-async function readLinkRecords(): Promise<{ rows: string[][], records: LinkRecord[] }> {
-  const rows = await getSheetValues(SHEET_NAME)
+function toLinkRecords(rows: string[][]): LinkRecord[] {
   const records: LinkRecord[] = []
 
   rows.forEach((row, index) => {
@@ -60,7 +59,17 @@ async function readLinkRecords(): Promise<{ rows: string[][], records: LinkRecor
     records.push({ link: rowToLink(row), rowNumber: index + 1 })
   })
 
-  return { rows, records }
+  return records
+}
+
+/** Mengubah isi mentah sheet `links` (termasuk header) menjadi daftar link. */
+export function parseLinkRows(rows: string[][]): Link[] {
+  return toLinkRecords(rows).map((record) => record.link)
+}
+
+async function readLinkRecords(): Promise<{ rows: string[][], records: LinkRecord[] }> {
+  const rows = await getSheetValues(SHEET_NAME)
+  return { rows, records: toLinkRecords(rows) }
 }
 
 /** Urutan tampil: `sort_order`, lalu waktu dibuat sebagai penentu bila sama. */

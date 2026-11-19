@@ -59,6 +59,10 @@ SSR berisi judul/isi/meta Open Graph, link nonaktif tidak ikut di HTML, header c
 404 untuk portal nonaktif/tidak ada/kode tidak valid (tanpa cache CDN), tampilan desktop & HP
 tanpa error console. Halaman 404 tampil benar di browser (teksnya dirender di sisi browser).
 
+Uji beban (19 Nov 2026, build production lokal, **tanpa** CDN = skenario terburuk): 3.000 kunjungan,
+200 bersamaan, mulai dari cache kosong → 3.000/3.000 berhasil, Google Sheets hanya dibaca **1 kali**,
+median 755 ms, p95 1,2 detik (dibatasi CPU laptop; di Vercel sebagian besar dilayani CDN).
+
 ## Known Issues / Utang Teknis
 
 | # | Masalah | Dampak | Saran |

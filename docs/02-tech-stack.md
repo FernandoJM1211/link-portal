@@ -109,7 +109,22 @@ Perintah ini langsung menyalin hasilnya ke clipboard (tidak tampil di layar):
 - Spreadsheet lokal dan production **sama** (satu `GOOGLE_SPREADSHEET_ID`): data yang diubah saat
   `npm run dev` langsung tampil di production. Untuk uji coba, pakai portal nonaktif atau buat
   spreadsheet terpisah untuk development.
-- Paket gratis Vercel (Hobby) ditujukan untuk penggunaan **non-komersial**.
+- Paket gratis Vercel (Hobby) ditujukan untuk penggunaan **non-komersial** (pemakaian untuk acara
+  internal unit tanpa tujuan mencari keuntungan termasuk di sini).
+
+## Kapasitas Kunjungan Ramai
+
+Target: ribuan pengunjung saat acara (mis. QR code di layar dipindai bersamaan).
+Halaman publik dilindungi tiga lapis agar kuota Google Sheets (±60 baca/menit) tidak jebol:
+
+1. **CDN Vercel** — `s-maxage=60, stale-while-revalidate=300`; sebagian besar kunjungan tidak sampai ke server.
+2. **Cache memori + single-flight** — kunjungan yang lolos ke server berbagi satu bacaan Sheets per 60 detik.
+3. **Data lama saat gagal + coba ulang** — bila Google Sheets error/kuota habis, data terakhir tetap disajikan.
+
+Uji beban lokal tanpa CDN: 3.000 kunjungan (200 bersamaan) → semua berhasil, Sheets dibaca 1 kali.
+
+Tips hari-H acara: buka sendiri halaman portal beberapa menit sebelum QR ditampilkan (memanaskan
+cache), dan hindari mengubah portal tersebut saat acara berlangsung.
 
 ## Tool Pengembangan
 
