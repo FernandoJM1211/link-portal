@@ -4,6 +4,9 @@ const isLoggingOut = ref(false)
 
 const { admin } = await useAdminSession()
 
+// Dashboard tidak perlu muncul di mesin pencari.
+useSeoMeta({ robots: 'noindex, nofollow' })
+
 async function handleLogout() {
   if (isLoggingOut.value) return
 

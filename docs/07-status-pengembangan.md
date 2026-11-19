@@ -11,7 +11,7 @@ Legenda: ✅ selesai · 🚧 sedang dikerjakan · ❌ belum ada
 | 1. Fondasi | Dokumentasi, migrasi Nuxt 4 + Nuxt UI 4, koneksi Google Sheets, login admin | ✅ |
 | 2. Backend multi-portal | Repository `portals` & `links`, service + API CRUD portal & link, API publik + cache | ✅ |
 | 3. Dashboard admin | Daftar portal, buat/ubah/nonaktifkan/duplikat/hapus, editor profil & tema, kelola link (drag & drop, aktif, unggulan), pratinjau langsung | ✅ |
-| 4. Halaman publik | `/<kode>` dengan tema, meta tag (preview WhatsApp), 404 | ❌ |
+| 4. Halaman publik | `/<kode>` SSR dengan tema, meta tag Open Graph (preview WhatsApp), cache CDN 60 detik, 404 | ✅ |
 | 5. Deploy | Repo GitHub + Vercel + environment variable | ❌ |
 
 ## Fitur
@@ -42,7 +42,9 @@ Legenda: ✅ selesai · 🚧 sedang dikerjakan · ❌ belum ada
 | Aktif/nonaktif & unggulan link | ✅ | ✅ |
 | Pratinjau langsung di editor | — | ✅ (desktop: bingkai HP; HP: tombol Pratinjau) |
 | Salin link portal | — | ✅ |
-| Data halaman publik `/<kode>` (cache 60 detik) | ✅ | ❌ (tahap 4) |
+| Halaman publik `/<kode>` (SSR, Open Graph, theme-color, favicon logo, cache CDN 60 detik) | ✅ | ✅ |
+| 404 untuk portal nonaktif / tidak ada / kode tidak valid | ✅ | ✅ |
+| Dashboard & login `noindex` | — | ✅ |
 
 Pengujian tahap 2 (19 Nov 2026): 47 skenario end-to-end terhadap spreadsheet asli lolos
 (validasi input, kode duplikat, normalisasi URL/WA/Drive, urutan, publik hanya data aktif,
@@ -52,6 +54,11 @@ Pengujian tahap 3 (19 Nov 2026): uji di Chrome headless (desktop 1366px & HP 390
 demo — drag & drop tersimpan sesuai urutan layar, pratinjau ikut berubah saat mengetik,
 tidak ada error console; data demo dibersihkan.
 
+Pengujian tahap 4 (19 Nov 2026) pada **build production** (`nuxt build` + `node .output/server/index.mjs`):
+SSR berisi judul/isi/meta Open Graph, link nonaktif tidak ikut di HTML, header cache CDN ada,
+404 untuk portal nonaktif/tidak ada/kode tidak valid (tanpa cache CDN), tampilan desktop & HP
+tanpa error console. Halaman 404 tampil benar di browser (teksnya dirender di sisi browser).
+
 ## Known Issues / Utang Teknis
 
 | # | Masalah | Dampak | Saran |
@@ -60,6 +67,7 @@ tidak ada error console; data demo dibersihkan.
 | 2 | Generator ID membaca nomor terbesar | Dua penulisan bersamaan bisa menghasilkan ID sama | Risiko kecil (satu admin) |
 | 3 | Logout hanya menghapus cookie di browser itu | Cookie yang tercuri tetap berlaku sampai kedaluwarsa (8 jam) | Ganti `SESSION_SECRET` untuk mencabut semua sesi |
 | 4 | Data lama di `data/data.json` (versi sebelum migrasi) belum dipindah ke sheet | — | Bisa dibuat ulang lewat dashboard, atau diimpor dengan script bila diperlukan |
-| 5 | Cache halaman publik per instance | Di Vercel, perubahan dari admin bisa terlambat tampil maks. 60 detik di instance lain | Terima; atau pakai cache bersama/Vercel KV bila perlu |
+| 5 | Cache halaman publik (memori server 60 detik + CDN Vercel `s-maxage=60, stale-while-revalidate=300`) | Perubahan dari admin baru terlihat publik setelah ±1–2 menit (pengunjung pertama setelah cache habis bisa masih melihat versi lama sekali) | Terima; pratinjau di dashboard selalu terbaru. Bila perlu instan, kurangi `s-maxage` di `app/pages/[code].vue` |
+| 8 | Ukuran build ±44 MB, sebagian besar paket `googleapis` | Cold start Vercel sedikit lebih lama | Bisa diganti `@googleapis/sheets` (lebih kecil) bila terasa lambat |
 | 6 | Duplikat portal: portal dibuat dulu, lalu link | Bila penulisan link gagal, portal salinan ada tanpa link | Hapus portal salinan lalu ulangi |
 | 7 | Nama ikon tidak dicek terhadap daftar Lucide di server | Ikon salah ketik tidak tampil | Dashboard memakai pemilih ikon (tahap 3) |

@@ -4,6 +4,7 @@ definePageMeta({
 })
 
 useHead({ title: 'Masuk' })
+useSeoMeta({ robots: 'noindex, nofollow' })
 
 const route = useRoute()
 

@@ -49,7 +49,7 @@ Peta seluruh file dan fungsinya. **Perbarui dokumen ini setiap menambah/menghapu
 | --- | --- | --- |
 | `default.vue` | `/` | Pembungkus polos. |
 | `auth.vue` | `/login` | Latar `slate-100`, konten di tengah. |
-| `admin.vue` | `/admin/**` | Header atas sticky (logo indigo, "Dashboard Admin", username, tombol Keluar) + konten `max-w-6xl`. |
+| `admin.vue` | `/admin/**` | Header atas sticky (logo indigo, "Dashboard Admin", username, tombol Keluar) + konten `max-w-6xl`. Meta `robots: noindex`. |
 
 ### Komponen (`app/components/`)
 
@@ -74,7 +74,8 @@ Peta seluruh file dan fungsinya. **Perbarui dokumen ini setiap menambah/menghapu
 | Route | File | Fungsi |
 | --- | --- | --- |
 | `/` | `index.vue` | Halaman netral (bukan daftar portal). |
-| `/login` | `login.vue` | Form login admin; kembali ke `redirect` (hanya `/admin/**`). |
+| `/:code` | `[code].vue` | **Halaman publik portal** (SSR). `<PortalView>` + meta SEO/Open Graph (judul, bio, logo, `theme-color`, canonical, favicon = logo). Header `Cache-Control: s-maxage=60, stale-while-revalidate=300` (cache CDN Vercel). Kode tidak valid / portal nonaktif / tidak ada → 404. Route statis (`/admin`, `/login`) selalu menang atas `[code]`. |
+| `/login` | `login.vue` | Form login admin; kembali ke `redirect` (hanya `/admin/**`). `noindex`. |
 | `/admin` | `admin/index.vue` | Tab **Daftar Portal** (kartu portal, cari, buat, aktif/nonaktif, menu salin/duplikat/hapus) dan **Status Database** (`?tab=database`). |
 | `/admin/portals/:portalId` | `admin/portals/[portalId].vue` | Editor portal: kepala (status, salin link, lihat publik, duplikat, hapus), tab **Kelola Tombol** & **Profil & Tampilan** (`?tab=profile`), pratinjau HP di kanan (desktop) / tombol Pratinjau melayang (HP). Peringatan saat keluar dengan perubahan profil belum disimpan. |
 
@@ -143,7 +144,7 @@ Kolom dipetakan dari `SHEET_HEADERS` (bukan indeks yang ditulis manual). Baris t
 | File | Fungsi |
 | --- | --- |
 | `portal-code.ts` | Aturan kode portal: `PORTAL_CODE_PATTERN`, `RESERVED_PORTAL_CODES`, `normalizePortalCode()`, `getPortalCodeError()`. |
-| `portal-themes.ts` | `PORTAL_THEMES` (label + kelas Tailwind), `getPortalTheme()`, `isPortalTheme()`. |
+| `portal-themes.ts` | `PORTAL_THEMES` (label, `swatch`, `themeColor` untuk meta theme-color, kelas Tailwind), `getPortalTheme()`, `isPortalTheme()`. |
 | `drive-image.ts` | `getGoogleDriveFileId(url)`, `toDirectImageUrl(url)` — link berbagi Drive → `https://lh3.googleusercontent.com/d/<ID>`. |
 | `link-icons.ts` | `LINK_ICON_OPTIONS` (30 ikon Lucide + label), `toLucideIconName(icon)` → `i-lucide-<icon>`. |
 

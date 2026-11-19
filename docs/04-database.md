@@ -82,8 +82,8 @@ Normalisasi sebelum disimpan:
 - `avatar_url` link berbagi Google Drive → `https://lh3.googleusercontent.com/d/<ID>`.
 - `email` → huruf kecil. `icon` → tanpa prefix `i-lucide-`, kosong = `link`.
 
-Edit manual di spreadsheet tetap terbaca, tetapi halaman publik baru berubah setelah
-cache habis (maks. 60 detik).
+Edit manual di spreadsheet tetap terbaca, tetapi halaman publik baru berubah setelah cache
+server & CDN habis (±1–2 menit).
 
 ## Jika Kelak Butuh Multi-Admin
 

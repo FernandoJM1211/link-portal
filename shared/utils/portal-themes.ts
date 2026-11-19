@@ -16,6 +16,8 @@ export type PortalTheme = {
   label: string
   /** Warna contoh untuk pilihan tema di dashboard. */
   swatch: string
+  /** Warna bilah browser HP (meta theme-color), sesuai warna atas gradasi. */
+  themeColor: string
   classes: PortalThemeClasses
 }
 
@@ -26,6 +28,7 @@ export const PORTAL_THEMES: readonly PortalTheme[] = [
   {
     value: 'indigo',
     label: 'Indigo',
+    themeColor: '#312e81',
     swatch: 'bg-gradient-to-br from-indigo-900 via-indigo-700 to-slate-900',
     classes: {
       wrapper: 'bg-gradient-to-br from-indigo-900 via-indigo-700 to-slate-900 text-white',
@@ -38,6 +41,7 @@ export const PORTAL_THEMES: readonly PortalTheme[] = [
   {
     value: 'emerald',
     label: 'Emerald',
+    themeColor: '#064e3b',
     swatch: 'bg-gradient-to-br from-emerald-900 via-teal-800 to-slate-900',
     classes: {
       wrapper: 'bg-gradient-to-br from-emerald-900 via-teal-800 to-slate-900 text-white',
@@ -50,6 +54,7 @@ export const PORTAL_THEMES: readonly PortalTheme[] = [
   {
     value: 'sunset',
     label: 'Sunset',
+    themeColor: '#881337',
     swatch: 'bg-gradient-to-br from-rose-900 via-orange-800 to-purple-950',
     classes: {
       wrapper: 'bg-gradient-to-br from-rose-900 via-orange-800 to-purple-950 text-white',
@@ -63,6 +68,7 @@ export const PORTAL_THEMES: readonly PortalTheme[] = [
   {
     value: 'ocean',
     label: 'Ocean',
+    themeColor: '#164e63',
     swatch: 'bg-gradient-to-br from-cyan-900 via-blue-800 to-slate-950',
     classes: {
       wrapper: 'bg-gradient-to-br from-cyan-900 via-blue-800 to-slate-950 text-white',
@@ -75,6 +81,7 @@ export const PORTAL_THEMES: readonly PortalTheme[] = [
   {
     value: 'midnight',
     label: 'Midnight',
+    themeColor: '#020617',
     swatch: 'bg-gradient-to-br from-slate-950 via-slate-900 to-zinc-950',
     classes: {
       wrapper: 'bg-gradient-to-br from-slate-950 via-slate-900 to-zinc-950 text-white',
